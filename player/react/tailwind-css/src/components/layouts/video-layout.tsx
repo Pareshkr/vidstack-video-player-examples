@@ -1,10 +1,11 @@
-import captionStyles from './captions.module.css';
+import { useEffect, useState } from 'react';
+
 import styles from './video-layout.module.css';
 
-import { Captions, Controls, Gesture } from '@vidstack/react';
+import { Controls, Gesture } from '@vidstack/react';
 
 import * as Buttons from '../buttons';
-import * as Menus from '../menus';
+import SearchBar from '../searchBar';
 import * as Sliders from '../sliders';
 import { TimeGroup } from '../time-group';
 import { Title } from '../title';
@@ -14,18 +15,29 @@ export interface VideoLayoutProps {
 }
 
 export function VideoLayout({ thumbnails }: VideoLayoutProps) {
+  const [searchValue, setSearchValue] = useState<string>('');
+  const [searched, setSearched] = useState<boolean>(false);
+
+  useEffect(() => {
+    setSearched(false);
+  }, [searchValue]);
+
+  const handleSearch = (event: React.FormEvent) => {
+    event.preventDefault(); // Prevents the default form submission behavior
+    if (searchValue.trim() !== '') {
+      setSearched(true);
+    }
+  };
+
   return (
     <>
       <Gestures />
-      <Captions
-        className={`${captionStyles.captions} media-preview:opacity-0 media-controls:bottom-[85px] media-captions:opacity-100 absolute inset-0 bottom-2 z-10 select-none break-words opacity-0 transition-[opacity,bottom] duration-300`}
-      />
       <Controls.Root
         className={`${styles.controls} media-controls:opacity-100 absolute inset-0 z-10 flex h-full w-full flex-col bg-gradient-to-t from-black/10 to-transparent opacity-0 transition-opacity`}
       >
         <div className="flex-1" />
         <Controls.Group className="flex w-full items-center px-2">
-          <Sliders.Time thumbnails={thumbnails} />
+          <Sliders.Time thumbnails={thumbnails} searched={searched} />
         </Controls.Group>
         <Controls.Group className="-mt-0.5 flex w-full items-center px-2 pb-2">
           <Buttons.Play tooltipPlacement="top start" />
@@ -34,9 +46,11 @@ export function VideoLayout({ thumbnails }: VideoLayoutProps) {
           <TimeGroup />
           <Title />
           <div className="flex-1" />
-          <Buttons.Caption tooltipPlacement="top" />
-          <Menus.Settings placement="top end" tooltipPlacement="top" />
-          <Buttons.PIP tooltipPlacement="top" />
+          <SearchBar
+            searchValue={searchValue}
+            setSearchValue={setSearchValue}
+            handleSearch={handleSearch}
+          />
           <Buttons.Fullscreen tooltipPlacement="top end" />
         </Controls.Group>
       </Controls.Root>

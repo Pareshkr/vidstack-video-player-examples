@@ -14,8 +14,10 @@ export const textTracks = [
     kind: 'subtitles',
   },
   // Chapters
+
   {
     src: 'https://files.vidstack.io/sprite-fight/chapters.vtt',
+    // src: 'https://pareshkr.github.io/neo-assets/timeStamps.vtt',
     kind: 'chapters',
     language: 'en-US',
     default: true,
